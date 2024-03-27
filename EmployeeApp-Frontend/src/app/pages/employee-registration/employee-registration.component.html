@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <style>
+        /* Custom Styles */
+        .gradient-custom {
+            background: linear-gradient(90deg, #00d6e4 10%, #00b4d8 90%) !important;
+        }
+
+        .card-registration {
+            background-color: #f8f9fa;
+        }
+
+        .card-registration .form-label {
+            font-weight: bold;
+        }
+
+        .card-registration .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .card-registration .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .card-registration .btn-primary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+        }
+
+        .table {
+            width: 100%;
+            background-color: #fff;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #dee2e6;
+            padding: 0.75rem;
+            vertical-align: top;
+        }
+
+        .table thead th {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #dee2e6;
+        }
+
+        .select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23808080" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>');
+            background-repeat: no-repeat;
+            background-position-x: 95%;
+            background-position-y: center;
+            border-radius: 5px;
+        }
+
+        .form-check-input[type="radio"] {
+            margin-top: 0.3rem;
+            margin-right: 0.3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row">
+                <div class="col-12 text-end">
+                    <button class="btn btn-sm btn-success" (click)="toggleListView()">{{ isListView ? 'New' : 'List' }}</button>
+
+                </div>
+            </div>
+            <div *ngIf="isListView" class="row justify-content-center align-items-center h-100">
+                <div class="col-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Sr No</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Salary</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let emp of employeeList; let sr= index">
+                                <td>{{ sr + 1 }}</td>
+                                <td>{{ emp.first_name }} {{ emp.last_name }}</td>
+                                <td>{{ emp.department }}</td>
+                                <td>{{ emp.salary }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" (click)="onEdit(emp)">Edit</button>
+                                    <button class="btn btn-sm btn-danger" (click)="onDelete(emp)">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+
+
+        <div *ngIf="!isListView">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow-2-strong card-registration">
+                        <div class="card-body p-4">
+                            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Employee Information</h3>
+                            <!-- <div class="form-group">
+                                <label for="firstName">Id</label>
+                                <input type="text" [(ngModel)]="employeeObject.id" id="firstName">
+                            </div> -->
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" [(ngModel)]="employeeObject.first_name" id="firstName">
+                            </div>
+                           
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" [(ngModel)]="employeeObject.last_name" id="lastName">
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="salary">Salary</label>
+                                <input type="number" [(ngModel)]="employeeObject.salary" id="salary">
+                            </div>
+                            <div class="form-group">
+                                <label for="bonus">Bonus</label>
+                                <input type="number" [(ngModel)]="employeeObject.bonus" id="bonus">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" [(ngModel)]="employeeObject.phone_number" id="phoneNumber">
+                            </div>
+                            <div class="form-group">
+                                <label for="hireDate">Hire Date</label>
+                                <input type="date" [(ngModel)]="employeeObject.hire_date" id="hireDate">
+                            </div>
+                            <div class="btn-container">
+                                <button class="btn btn-primary" (click)="onCreateEmp(employeeObject.id)">Submit</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
