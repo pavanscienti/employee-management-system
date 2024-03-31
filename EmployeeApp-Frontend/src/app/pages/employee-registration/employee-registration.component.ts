@@ -39,9 +39,16 @@ export class EmployeeRegistrationComponent implements OnInit {
     this.loadEmployees();
   }
 
+ 
+
+ 
   // Load employees from backend
   loadEmployees() {
-    this.http.get<any>("http://127.0.0.1:8000/all-emp/").subscribe((res: any) => {
+    const token = localStorage.getItem("empToken");
+    const headers = {
+      'Authorization': `Bearer ${token}` // Assuming the token is a Bearer token
+    };
+    this.http.get<any>("http://127.0.0.1:8000/all-emp/",{ headers }).subscribe((res: any) => {
       this.employeeList = res;
     });
   }

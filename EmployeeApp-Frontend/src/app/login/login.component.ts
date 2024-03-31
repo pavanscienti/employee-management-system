@@ -35,8 +35,8 @@ export class LoginComponent {
         return response.json();
       })
       .then((data) => {
-        const accessToken = data.access_token;
-
+        const accessToken = data.token;
+        localStorage.setItem("empToken",accessToken);
         // Store the token in the authentication service
         this.authService.setAccessToken(accessToken);
 

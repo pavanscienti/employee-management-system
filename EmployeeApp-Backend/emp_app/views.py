@@ -13,14 +13,28 @@ from rest_framework.decorators import api_view
 from .serializers import UserSerializer
 from .models import User
 
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 # Your existing views
 
 def index(request):
     return JsonResponse({'message': 'Welcome to the API backend.'})
 
 
+# Example view with token authentication
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def my_secure_view(request):
+    # Your view logic here
+    return Response({'message': 'This is a secure view accessible only with a valid token.'})
+
+
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def create_user(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
@@ -59,7 +73,8 @@ def login(request):
 
 
     
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def allEmp(request):
     if request.method == 'GET':
         employees = Employee.objects.all()
@@ -70,7 +85,8 @@ def allEmp(request):
 
 
 
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @csrf_exempt
 def addEmp(request):
     if request.method == 'POST':
@@ -111,6 +127,8 @@ def addEmp(request):
 
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 @csrf_exempt
 def removeEmp(request, empID=None):
     if request.method == 'POST':
@@ -175,7 +193,8 @@ def updateEmp(request, empID=None):
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
     
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def getEmployee(request, empID=None):
     if request.method == 'GET':
         try:
