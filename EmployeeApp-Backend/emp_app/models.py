@@ -35,7 +35,7 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=128)
     token = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=True)
 
     objects = CustomUserManager()
 

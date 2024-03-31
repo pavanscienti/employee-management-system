@@ -159,7 +159,10 @@ export class EmployeeRegistrationComponent implements OnInit {
         return response.json();
       })
       .then(data => {
-        alert(data.message);
+        // alert(data.message);
+        alert("successsfull")
+        this.isListView = !this.isListView;
+        this.loadEmployees();
         // Reload the list of employees or update the UI accordingly
       })
       .catch(error => {
