@@ -87,7 +87,7 @@
         .form-group {
             width: 100%;
             margin-bottom: 15px;
-            
+
         }
 
         .btn-container {
@@ -108,95 +108,211 @@
         .btn:hover {
             background-color: #0056b3;
         }
+
+        .dashboard-item {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .dashboard-item-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dashboard-item-content h5 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
     </style>
 </head>
 
 <body>
     <section class="vh-100 gradient-custom">
         <div class="container py-5 h-100">
+
+
             <div class="row">
                 <div class="col-12 text-end">
-                    <button class="btn btn-sm btn-success" (click)="toggleListView()">{{ isListView ? 'New' : 'List'
+                    <!-- <button *ngIf="isListView" class="btn btn-sm btn-success" (click)="toggleListView()">{{ isListView ? 'New' : 'List' }}</button>
+                    <button *ngIf="!showDashboard" class="btn btn-sm btn-success" style="margin-left: 10px;" (click)="toggleView(true)">Dashboard</button>
+                    <button *ngIf="showDashboard" class="btn btn-sm btn-success" style="margin-left: 10px;" (click)="toggleView(false)">Employee Information</button> -->
+
+                    <button class="btn btn-sm btn-success" (click)="toggleListView()"> {{ isListView ? 'New' : 'List'
                         }}</button>
+                    <button class="btn btn-sm btn-success" style="margin-left: 10px;"
+                        (click)="toggleView(true)">Dashboard</button>
+                    <!-- <button class="btn btn-sm btn-success" style="margin-left: 10px;"
+                        (click)="toggleView(false)">Employee Information</button> -->
 
-                </div>
-            </div>
-            <div *ngIf="isListView" class="row justify-content-center align-items-center h-100">
-                <div class="col-12">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Sr No</th>
-                                <th>Name</th>
-                                <th>Department</th>
-                                <th>Salary</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let emp of employeeList; let sr= index">
-                                <td>{{ sr + 1 }}</td>
-                                <td>{{ emp.first_name }} {{ emp.last_name }}</td>
-                                <td>{{ emp.department }}</td>
-                                <td>{{ emp.salary }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" (click)="onEdit(emp)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" (click)="onDelete(emp)">Delete</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
                 </div>
             </div>
 
 
+            <div *ngIf="showDashboard && !isListView" class="row mb-4">
+                <!-- <div class="col-md-6"> -->
+                <div class="row card shadow-2-strong card-registration">
+                    <div class="col-md-6 card-body p-4">
+                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Dashboard</h3>
+                        <div class="row">
+                            <!-- First card -->
+                            <div class="col-lg-4" >
+                                <div class="dashboard-item">
+                                    <div class="dashboard-item-content">
+                                        <h5>Total Employees</h5>
+                                        <p class="dashboard-number">{{ employeeList.length }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Second card -->
+                            <div class="col-lg-4">
+                                <div class="dashboard-item">
+                                    <div class="dashboard-item-content">
+                                        <h5>Average Salary</h5>
+                                        <p class="dashboard-number">{{ calculateAverageSalary() }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 card-body p-4">
+                                <!-- Third card -->
+                                <div class="col-md-6">
+                                    <div class="dashboard-item">
+                                        <div class="dashboard-item-content">
+                                            <h5>Role Counts</h5>
+                                            <div *ngFor="let role of getRoleCounts() | keyvalue">
+                                                <p class="dashboard-number">{{ role.key }}: {{ role.value }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Fourth card -->
+                                <div class="col-md-6">
+                                    <div class="dashboard-item">
+                                        <div class="dashboard-item-content">
+                                            <h5>Department Counts</h5>
+                                            <div *ngFor="let role of getDepartmentCounts() | keyvalue">
+                                                <p class="dashboard-number">{{ role.key }}: {{ role.value }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
 
-            <div *ngIf="!isListView">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="card shadow-2-strong card-registration">
-                            <div class="card-body p-4">
-                                <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Employee Information</h3>
-                                <!-- <div class="form-group">
+                    </div>
+                    <!-- </div> -->
+                </div>
+
+
+                <div *ngIf="isListView && !showDashboard" class="row justify-content-center align-items-center h-100">
+                    <div class="col-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <!-- <th>Hiring Date</th> -->
+                                    <th>Salary</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let emp of employeeList; let sr= index">
+                                    <td>{{ sr + 1 }}</td>
+                                    <td>{{ emp.first_name }} {{ emp.last_name }}</td>
+                                    <td>{{ emp.department }}</td>
+                                    <td>{{ emp.role }} </td>
+                                    <!-- <td>{{ emp.hire_date }}</td> -->
+                                    <td>{{ emp.salary }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" (click)="onEdit(emp)">Edit</button>
+                                        <button class="btn btn-sm btn-danger" (click)="onDelete(emp)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
+                <div *ngIf="!isListView && !showDashboard">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card shadow-2-strong card-registration">
+                                <div class="card-body p-4">
+                                    <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Employee Information</h3>
+                                    <!-- <div class="form-group">
                                 <label for="firstName">Id</label>
                                 <input type="text" [(ngModel)]="employeeObject.id" id="firstName">
                             </div> -->
-                                <div class="form-group" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <label for="firstName" style="width: 100px;">First Name</label>
-                                    <input type="text" style="width: 200px;" [(ngModel)]="employeeObject.first_name" id="firstName">
-                                </div>
+                                    <div class="form-group"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <label for="firstName" style="width: 100px;">First Name</label>
+                                        <input type="text" style="width: 200px;" [(ngModel)]="employeeObject.first_name"
+                                            id="firstName">
+                                    </div>
 
-                                <div class="form-group" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <label for="lastName" style="width: 100px;">Last Name</label>
-                                    <input type="text" style="width: 200px;" [(ngModel)]="employeeObject.last_name" id="lastName">
-                                </div>
+                                    <div class="form-group"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <label for="lastName" style="width: 100px;">Last Name</label>
+                                        <input type="text" style="width: 200px;" [(ngModel)]="employeeObject.last_name"
+                                            id="lastName">
+                                    </div>
 
-                                <div class="form-group" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <label for="salary" style="width: 100px;">Salary</label>
-                                    <input type="number" style="width: 200px;" [(ngModel)]="employeeObject.salary" id="salary">
-                                </div>
-                                <div class="form-group" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <label for="bonus" style="width: 100px;">Bonus</label>
-                                    <input type="number" style="width: 200px;" [(ngModel)]="employeeObject.bonus" id="bonus">
-                                </div>
-                                <div class="form-group" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <label for="phoneNumber" style="width: 100px;">Phone Number</label>
-                                    <input type="text" style="width: 200px;" [(ngModel)]="employeeObject.phone_number" id="phoneNumber">
-                                </div>
-                                <div class="form-group" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <label for="hireDate" style="width: 100px;">Hire Date</label>
-                                    <input type="date" style="width: 200px;" [(ngModel)]="employeeObject.hire_date" id="hireDate">
-                                </div>
-                                <div class="btn-container" style="display: flex;flex-direction: row;justify-content: space-evenly;">
-                                    <button class="btn btn-primary"
-                                        (click)="onCreateEmp(employeeObject.id)">Submit</button>
-                                </div>
+                                    <div class="form-group"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <label for="salary" style="width: 100px;">Salary</label>
+                                        <input type="number" style="width: 200px;" [(ngModel)]="employeeObject.salary"
+                                            id="salary">
+                                    </div>
+                                    <div class="form-group"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <label for="bonus" style="width: 100px;">Bonus</label>
+                                        <input type="number" style="width: 200px;" [(ngModel)]="employeeObject.bonus"
+                                            id="bonus">
+                                    </div>
+                                    <div class="form-group"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <label for="phoneNumber" style="width: 100px;">Phone Number</label>
+                                        <input type="text" style="width: 200px;"
+                                            [(ngModel)]="employeeObject.phone_number" id="phoneNumber">
+                                    </div>
+                                    <div class="form-group"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <label for="hireDate" style="width: 100px;">Hire Date</label>
+                                        <input type="date" style="width: 200px;" [(ngModel)]="employeeObject.hire_date"
+                                            id="hireDate">
+                                    </div>
+                                    <div class="btn-container"
+                                        style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                                        <button class="btn btn-primary"
+                                            (click)="onCreateEmp(employeeObject.id)">Submit</button>
+                                    </div>
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
     </section>
