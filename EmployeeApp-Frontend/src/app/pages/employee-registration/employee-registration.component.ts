@@ -9,6 +9,19 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./employee-registration.component.css']
 })
 export class EmployeeRegistrationComponent implements OnInit {
+  showDashboard: boolean = false;
+  showEmployees: boolean = false;
+  employeeList: any[] = [];
+  isListView: boolean = true;
+  toggleView(isDashboard: boolean) {
+    // this.showDashboard = isDashboard;
+
+    // this.showEmployees = !isDashboard;
+    this.showDashboard = isDashboard;
+    this.showEmployees = !isDashboard;
+    this.isListView = false;
+
+  }
 
   // Define hardcoded departments
   departments: any[] = [
@@ -18,10 +31,10 @@ export class EmployeeRegistrationComponent implements OnInit {
     // Add more departments as needed
   ];
 
-  employeeList: any[] = [];
-  isListView: boolean = true;
+
+
   employeeObject: any = {
-    "onedit":false,
+    "onedit": false,
     "first_name": "",
     "last_name": "",
     "department": 0,
@@ -29,9 +42,9 @@ export class EmployeeRegistrationComponent implements OnInit {
     "salary": 0,
     "bonus": 0,
     "phone_number": "",
-    "hire_date": "11/11/2021"
+    "hire_date": "2022-03-31"
   };
-  
+
 
   constructor(private http: HttpClient) { }
 
@@ -39,16 +52,16 @@ export class EmployeeRegistrationComponent implements OnInit {
     this.loadEmployees();
   }
 
- 
 
- 
+
+
   // Load employees from backend
   loadEmployees() {
     const token = localStorage.getItem("empToken");
     const headers = {
       'Authorization': `Bearer ${token}` // Assuming the token is a Bearer token
     };
-    this.http.get<any>("http://127.0.0.1:8000/all-emp/",{ headers }).subscribe((res: any) => {
+    this.http.get<any>("http://127.0.0.1:8000/all-emp/", { headers }).subscribe((res: any) => {
       this.employeeList = res;
     });
   }
@@ -56,7 +69,12 @@ export class EmployeeRegistrationComponent implements OnInit {
   toggleListView() {
     this.isListView = !this.isListView;
     this.employeeObject.onedit = !this.employeeObject.onedit
+    // this.isListView = !this.isListView;
+    this.showDashboard = false;
+    this.showEmployees = false;
     if (this.isListView) {
+      const currentDate = new Date();
+      const hireDate = currentDate.toISOString().split('T')[0];
       // Reset employee object when switching to list view
       this.employeeObject = {
         "first_name": "",
@@ -66,71 +84,79 @@ export class EmployeeRegistrationComponent implements OnInit {
         "salary": 0,
         "bonus": 0,
         "phone_number": "",
-        "hire_date": "11/11/2021"
+        "hire_date": hireDate
       };
     }
   }
+
+  calculateAverageSalary(): number {
+    let totalSalary = 0;
+    for (const emp of this.employeeList) {
+      totalSalary += emp.salary;
+    }
+    return totalSalary / this.employeeList.length;
+  }
+
+
+  getRoleCounts(): { [role: string]: number } {
+    const roleCounts: { [role: string]: number } = {};
+  
+    // Initialize counts for each role to zero
+    for (const emp of this.employeeList) {
+      roleCounts[emp.role] = 0;
+    }
+  
+    // Count occurrences of each role
+    for (const emp of this.employeeList) {
+      roleCounts[emp.role]++;
+    }
+  
+    return roleCounts;
+  }
+  getDepartmentCounts(): { [role: string]: number } {
+    const departmentcounts: { [role: string]: number } = {};
+  
+    // Initialize counts for each role to zero
+    for (const emp of this.employeeList) {
+      departmentcounts[emp.department] = 0;
+    }
+  
+    // Count occurrences of each role
+    for (const emp of this.employeeList) {
+      departmentcounts[emp.department]++;
+    }
+  
+    return departmentcounts;
+  }
   
 
-  // Create employee
-  // onCreateEmp() {
-  //   // Get the ID of the selected department
-  //   // const selectedDeptId = this.departments.find(dept => dept.deptName === this.employeeObject.department)?.deptId;
+  department: string[] = ['HR', 'IT', 'Management'];
+  roles: string[] = ['Software Engineer', 'Frontend Developer', 'Backend Developer'];
 
-  //   // // Check if the department name exists
-  //   // if (!selectedDeptId) {
-  //   //   alert("Department is required.");
-  //   //   return;
-  //   // }
+  getRandomDepartment(): string {
+    const index = Math.floor(Math.random() * this.department.length);
+    return this.departments[index];
+  }
 
-  //   // Prepare employee data with the selected department ID
-  //   const employeeData = {
-  //   //   first_name: this.employeeObject.first_name,
-  //   //   last_name: this.employeeObject.last_name,
-  //   //  // department: selectedDeptId, // Use the selected department ID
-  //   //  emp_dept: "55",
-  //   //  emp_role: this.employeeObject.role,
-  //   //   salary: this.employeeObject.salary,
-  //   //   bonus: this.employeeObject.bonus,
-  //   //   phone: this.employeeObject.phone_number,
-  //   //   hire_date: this.employeeObject.hire_date
-
-  //   "first_name": "abhi",
-  //   "last_name": "N",
-  //   "department": 1, 
-  //   "role": 1, 
-  //   "salary": 5000880,
-  //   "bonus": 1000,
-  //   "phone_number": "1662567890",
-  //   "hire_date": "2022-03-31"
-
-  // {
-  //   "first_name": "Pavan",
-  //   "last_name": "Kumar P S",
-  //   "department": 11,
-  //   "role": 111,
-  //   "salary": 11,
-  //   "bonus": 1000,
-  //   "phone_number": "8296191962",
-  //   "hire_date": "2010-01-04"
-  // }
-
-  //   };
-
-  //   // Send POST request to add employee
-  //   this.http.post<any>("http://127.0.0.1:8000/add-emp/", employeeData).subscribe((res:any)=>{
-  //     alert(res.message);
-  //     this.loadEmployees(); // Reload the list of employees after adding a new employee
-  //   });
-  // }
-  
+  getRandomRole(): string {
+    const index = Math.floor(Math.random() * this.roles.length);
+    return this.roles[index];
+  }
   onCreateEmp(empId: number) {
     // Assuming selectedDeptId is obtained properly
+    const currentDate = new Date();
+    const hireDate = currentDate.toISOString().split('T')[0];
+    // this.employeeObject.hire_date = hireDate;
+    const departmentOptions = [0, 1, 2]; // Assuming department options are represented by integers 0, 1, 2
+    const roleOptions = [0, 1, 2]; // Assuming role options are represented by integers 0, 1, 2
+
+    const randomDepartmentIndex = Math.floor(Math.random() * departmentOptions.length);
+    const randomRoleIndex = Math.floor(Math.random() * roleOptions.length);
 
 
     // Construct the employee data object
     const employeeData = {
-      "id":this.employeeObject.id,
+      "id": this.employeeObject.id,
       "first_name": this.employeeObject.first_name,
       "last_name": this.employeeObject.last_name,
       // "department": selectedDeptId,
@@ -141,12 +167,12 @@ export class EmployeeRegistrationComponent implements OnInit {
       // "hire_date": this.employeeObject.hire_date
       // "first_name": "abhi",
       // "last_name": "N",
-      "department": 1,
-      "role": 1,
+      "department": departmentOptions[randomDepartmentIndex],
+      "role": roleOptions[randomRoleIndex],
       // "salary": 5000880,
       // "bonus": 1000,
       // "phone_number": "1662567890",
-      "hire_date": "2022-03-31"
+      "hire_date": hireDate
     };
 
     console.log(employeeData)
